@@ -2,7 +2,9 @@
 
 ## Unpublished
 
-## 0.1.1 — 2026-10-06
+## 1.0.0 — 2026-10-06
+
+First stable release, used in production in [Pikuro](https://pikuro.app) since its version 0.9.0. No API changes since 0.1.0.
 
 ### 💡 Others
 
