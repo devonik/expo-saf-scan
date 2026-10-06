@@ -2,10 +2,6 @@
 
 ## Unpublished
 
-### 🛠 Breaking changes
-
 ### 🎉 New features
 
-### 🐛 Bug fixes
-
-### 💡 Others
+- `pickFolderAsync` with a start folder, `hasAccess`, recursive `listAsync` (one query per folder), `videoThumbnailAsync`, `deleteAsync`, `getInstallTime` and a config plugin for `<queries>`.

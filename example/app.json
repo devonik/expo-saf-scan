@@ -22,6 +22,17 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-image",
+      [
+        "../app.plugin.js",
+        {
+          "packages": [
+            "com.whatsapp"
+          ]
+        }
+      ]
+    ]
   }
 }

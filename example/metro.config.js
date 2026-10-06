@@ -14,6 +14,16 @@ config.resolver.blockList = [
   new RegExp(path.resolve('..', 'node_modules', 'react-native').replace(/\\/g, '\\\\')),
 ];
 
+// Packages that must exist once: the module's own dev copies in ../node_modules
+// would otherwise load a second time (with expo: "property is not writable").
+const SINGLETONS = ['expo', 'expo-modules-core', 'react', 'react-native'];
+const fromExample = path.join(__dirname, 'index.ts');
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  const parts = moduleName.split('/');
+  const name = moduleName.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
+  const origin = SINGLETONS.includes(name) ? { ...context, originModulePath: fromExample } : context;
+  return origin.resolveRequest(origin, moduleName, platform);
+};
 config.resolver.nodeModulesPaths = [
   path.resolve(__dirname, './node_modules'),
   path.resolve(__dirname, '../node_modules'),

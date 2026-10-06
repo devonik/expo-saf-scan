@@ -1,8 +1,15 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { NativeModule, requireOptionalNativeModule } from 'expo';
 
-declare class ExpoSafScanModule extends NativeModule<{}> {
-  hello(): string;
-  setValueAsync(value: string): Promise<void>;
+import type { ListOptions, SafEntry } from './ExpoSafScan.types';
+
+declare class ExpoSafScanModule extends NativeModule<Record<string, never>> {
+  pickFolderAsync(initialUri: string | null): Promise<string | null>;
+  hasAccess(treeUri: string): boolean;
+  listAsync(treeUri: string, options: ListOptions): Promise<SafEntry[]>;
+  videoThumbnailAsync(uri: string, maxSize: number): Promise<string | null>;
+  deleteAsync(uris: string[]): Promise<string[]>;
+  getInstallTime(packageName: string): number | null;
 }
 
-export default requireNativeModule<ExpoSafScanModule>('ExpoSafScan');
+/** Null on iOS and web: the Storage Access Framework is Android only. */
+export default requireOptionalNativeModule<ExpoSafScanModule>('ExpoSafScan');
