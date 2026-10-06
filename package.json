@@ -1,6 +1,6 @@
 {
   "name": "expo-saf-scan",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fast listing, video thumbnails and deleting in folders picked with Android's Storage Access Framework",
   "main": "build/index.js",
   "types": "build/index.d.ts",

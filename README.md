@@ -18,7 +18,7 @@ folder.
 Measured with the [example app](example) in a debug build on an Android 16
 emulator (Pixel 9a). Both get faster in a release build; the gap stays.
 
-<img src="docs/example-app.png" width="270" alt="The example app: expo-saf-scan lists 3,074 files in 2.6 s, expo-file-system in 54.8 s; below, thumbnails of photos and videos from the picked folder.">
+<img src="https://raw.githubusercontent.com/devonik/expo-saf-scan/main/docs/example-app.png" width="270" alt="The example app: expo-saf-scan lists 3,074 files in 2.6 s, expo-file-system in 54.8 s; below, thumbnails of photos and videos from the picked folder.">
 
 Built for [Pikuro](https://pikuro.app), where it powers the WhatsApp cleanup.
 
