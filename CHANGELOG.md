@@ -2,6 +2,10 @@
 
 ## Unpublished
 
+### 💡 Others
+
+- README: npm badges, thumbnails and parallel deletes in the feature list.
+
 ## 1.1.0 — 2026-10-10
 
 ### 🎉 New features

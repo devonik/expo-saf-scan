@@ -1,6 +1,12 @@
 # expo-saf-scan
 
-Fast listing, video thumbnails and deleting in folders picked with Android's
+[![npm version](https://img.shields.io/npm/v/expo-saf-scan.svg)](https://www.npmjs.com/package/expo-saf-scan)
+[![npm downloads](https://img.shields.io/npm/dm/expo-saf-scan.svg)](https://www.npmjs.com/package/expo-saf-scan)
+[![license](https://img.shields.io/npm/l/expo-saf-scan.svg)](LICENSE)
+![platform: Android](https://img.shields.io/badge/platform-Android-3DDC84.svg)
+![Expo modules](https://img.shields.io/badge/Expo-module-000020.svg?logo=expo)
+
+Fast listing, thumbnails and deleting in folders picked with Android's
 Storage Access Framework (SAF), as an [Expo module](https://docs.expo.dev/modules/overview/).
 
 Android lets apps read another app's shared folder, like WhatsApp's media in
@@ -26,8 +32,8 @@ Built for [Pikuro](https://pikuro.app), where it powers the WhatsApp cleanup.
 
 - **Folder picker** that opens at a given folder and keeps read/write access across restarts
 - **Fast listing**: one query per folder with name, size, MIME type and date, optionally recursive (subfolders in parallel)
-- **Video thumbnails** from the first frame, cached as small JPEGs, without reading the whole video into memory (image components load the full file for a video URI)
-- **Batch delete**
+- **Thumbnails** of photos and videos, cached as small JPEGs: Android's own thumbnail when there is one, otherwise decoded at a fraction of the size (a video's first frame). Never reads the whole file into memory (image components load the full file for a video URI). Works for media library URIs too.
+- **Batch delete**, several files at once
 - **Install time of other apps**, with a config plugin for the `<queries>` entry Android 11+ needs
 
 Android only: iOS has no equivalent of picking another app's folder. On iOS
