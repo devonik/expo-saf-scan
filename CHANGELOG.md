@@ -2,6 +2,8 @@
 
 ## Unpublished
 
+## 1.1.0 — 2026-10-10
+
 ### 🎉 New features
 
 - `thumbnailAsync` for photos and videos, picked-folder and media library URIs: uses Android's own thumbnail when there is one, otherwise decodes at a fraction of the size.
