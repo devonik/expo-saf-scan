@@ -60,7 +60,7 @@ import {
   hasAccess,
   listAsync,
   pickFolderAsync,
-  videoThumbnailAsync,
+  thumbnailAsync,
 } from 'expo-saf-scan';
 
 // Opens the system picker right in WhatsApp's folder; the user taps "Use this folder" and "Allow".
@@ -71,8 +71,8 @@ if (!treeUri) return; // Cancelled.
 // Store treeUri: access stays until the app is uninstalled. Check it later with hasAccess(treeUri).
 
 const entries = await listAsync(treeUri, { recursive: true });
-const videos = entries.filter((entry) => entry.mimeType?.startsWith('video/'));
-const thumbnail = await videoThumbnailAsync(videos[0].uri, { maxSize: 256 }); // file:// URI of a JPEG
+const media = entries.filter((entry) => /^(image|video)\//.test(entry.mimeType ?? ''));
+const thumbnail = await thumbnailAsync(media[0].uri, { maxSize: 256 }); // file:// URI of a JPEG
 ```
 
 ## API
@@ -107,15 +107,28 @@ Lists a picked folder with one query per folder.
 Each `SafEntry` has `uri`, `documentId`, `name`, `path` (relative to the listed
 folder), `isDirectory`, `mimeType`, `size` (bytes) and `lastModified` (ms).
 
+### `thumbnailAsync(uri, { maxSize? }): Promise<string | null>`
+
+File URI of a cached JPEG of a photo or video, at most `maxSize` px (default
+512) on its longer side; `null` if the file can't be read. Takes a document URI
+from `listAsync` or a media library `content://` URI.
+
+It asks Android for the thumbnail it usually keeps already (the gallery made
+it) and only decodes the file when there is none: a photo at a fraction of its
+size, a video's first frame. Loading a document URI into an image component
+instead decodes the whole photo, and for a video reads the whole file into
+memory, which crashes with large videos.
+
 ### `videoThumbnailAsync(uri, { maxSize? }): Promise<string | null>`
 
-File URI of a cached JPEG of a video's first frame, at most `maxSize` px (default
-512) on its longer side; `null` if the video can't be read.
+**Deprecated**, use `thumbnailAsync`. Removed in 2.0.0. File URI of a cached
+JPEG of a video's first frame.
 
 ### `deleteAsync(uris): Promise<string[]>`
 
 Deletes files or folders for good (there is no trash) and resolves with the
-URIs that are gone afterwards. Android shows no confirmation for SAF deletes,
+URIs that are gone afterwards, including those that were gone already. Up to 8
+deletes run at once. Android shows no confirmation for SAF deletes,
 so ask the user first.
 
 ### `getInstallTime(packageName): number | null`

@@ -7,7 +7,7 @@ import {
   hasAccess,
   listAsync,
   pickFolderAsync,
-  videoThumbnailAsync,
+  thumbnailAsync,
   type SafEntry,
 } from 'expo-saf-scan';
 import { useEffect, useState } from 'react';
@@ -139,11 +139,11 @@ export default function App() {
 
 function Thumbnail({ entry }: { entry: SafEntry }) {
   const isVideo = entry.mimeType?.startsWith('video/') ?? false;
-  const [source, setSource] = useState<string | null>(isVideo ? null : entry.uri);
+  const [source, setSource] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isVideo) videoThumbnailAsync(entry.uri, { maxSize: 256 }).then(setSource);
-  }, [entry.uri, isVideo]);
+    thumbnailAsync(entry.uri, { maxSize: 256 }).then(setSource);
+  }, [entry.uri]);
 
   return (
     <View style={styles.tile}>

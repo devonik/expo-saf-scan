@@ -20,9 +20,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.security.MessageDigest
+
+/** Deletes running at once; more barely helps, MediaStore writes queue up. */
+private const val DELETE_PARALLELISM = 8
 
 class ListOptions : Record {
   /** Folder to list, as a document ID inside the tree; the tree's root when null. */
@@ -74,21 +79,24 @@ class ExpoSafScanModule : Module() {
       }
     }
 
+    AsyncFunction("thumbnailAsync") Coroutine { uri: String, maxSize: Int ->
+      withContext(Dispatchers.IO) { Thumbnails(context).thumbnail(Uri.parse(uri), maxSize) }
+    }
+
+    // Deprecated: thumbnailAsync covers videos too. Removed in 2.0.0.
     AsyncFunction("videoThumbnailAsync") Coroutine { uri: String, maxSize: Int ->
       withContext(Dispatchers.IO) { videoThumbnail(uri, maxSize) }
     }
 
     AsyncFunction("deleteAsync") Coroutine { uris: List<String> ->
+      // Each delete is a provider call plus a MediaStore update that mostly
+      // waits: run several at once (one by one took minutes for thousands of files).
+      val permits = Semaphore(DELETE_PARALLELISM)
       withContext(Dispatchers.IO) {
-        uris.filter { uri ->
-          try {
-            DocumentsContract.deleteDocument(resolver, Uri.parse(uri))
-          } catch (e: java.io.FileNotFoundException) {
-            true // Already gone.
-          } catch (e: Exception) {
-            false
-          }
-        }
+        uris
+          .map { uri -> async { permits.withPermit { if (delete(Uri.parse(uri))) uri else null } } }
+          .awaitAll()
+          .filterNotNull()
       }
     }
 
@@ -100,6 +108,15 @@ class ExpoSafScanModule : Module() {
       }
     }
   }
+
+  private fun delete(uri: Uri): Boolean =
+    try {
+      DocumentsContract.deleteDocument(resolver, uri)
+    } catch (e: java.io.FileNotFoundException) {
+      true // Already gone.
+    } catch (e: Exception) {
+      false
+    }
 
   private suspend fun list(tree: Uri, documentId: String, path: String, options: ListOptions): List<Map<String, Any?>> =
     coroutineScope {
